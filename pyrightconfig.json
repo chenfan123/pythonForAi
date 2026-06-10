@@ -1,6 +1,6 @@
 {
-  "include": ["lessons", "utils"],
-  "extraPaths": ["."],
+  "include": ["src", "tests", "lessons"],
+  "extraPaths": ["src"],
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.9"
