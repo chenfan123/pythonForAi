@@ -1,0 +1,43 @@
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# 环境变量与 API 密钥（勿提交）
+.env
+.env.*
+!.env.example
+
+# 常见密钥/凭证文件
+secrets.json
+credentials.json
+*.pem
+*.key
+*.p12
+*.crt
+config.local.*
+*_secret.*
+*_secrets.*
+
+# 日志与本地数据
+*.log
+logs/
+.cache/
+.ipynb_checkpoints/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
