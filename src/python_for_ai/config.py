@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 MODEL_NAME = "qwen3.7-max"
-DEFAULT_BASE_URL = "https://api.302ai.cn/v1"
+DEFAULT_BASE_URL = "https://api.302ai.cn/v1/chat/completions"
 
 
 def find_project_root() -> Path:

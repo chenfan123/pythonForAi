@@ -1,5 +1,6 @@
 PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
+VENV_PYTHON := python3
 
 .PHONY: help install dev test lint format run-lesson clean
 
@@ -12,7 +13,8 @@ help:
 	@echo "make clean     - remove build artifacts"
 
 install:
-	test -d .venv || $(PYTHON) -m venv .venv
+	test -d .venv || $(VENV_PYTHON) -m venv .venv
+	$(PIP) install --upgrade pip setuptools wheel
 	$(PIP) install -e ".[dev]"
 
 dev: install
