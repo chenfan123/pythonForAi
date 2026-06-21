@@ -57,3 +57,28 @@ print(memory2.load_memory_variables({}))
 #### ConversationSummaryMemory 对话摘要内存
 
 对话摘要内存。只保存对话的摘要，超出窗口大小的对话会被丢弃。
+
+```python
+from langchain_classic.memory import ConversationSummaryMemory
+schedule = "There is a meeting at 8am with your product team. \
+You will need your powerpoint presentation prepared. \
+9am-12pm have time to work on your LangChain \
+project which will go quickly because Langchain is such a powerful tool. \
+At Noon, lunch at the italian resturant with a customer who is driving \
+from over an hour away to meet you to understand the latest in AI. \
+Be sure to bring your laptop to show the latest LLM demo."
+memory = ConversationSummaryMemory(llm='gpt-3.5-turbo', max_token_limit=100)
+memory.save_context({"input": "Hello"}, {"output": "What's up"})
+memory.save_context({"input": "Not much, just hanging"}, {"output": "Cool"})
+memory.save_context({"input": "What is on the schedule today?"}, {"output": f"{schedule}"})
+print(memory.load_memory_variables({}))
+conversation = ConversationChain(
+    llm=llm,
+    memory = memory,
+    verbose=True
+)
+conversation.predict(input="What would be a good demo to show?")
+print(memory.load_memory_variables({}))
+```
+
+更好的方案是使用向量数据库，将对话历史存储到向量数据库中，然后根据查询条件从向量数据库中查询相关的对话历史。
