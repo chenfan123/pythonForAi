@@ -5,3 +5,55 @@
 - output parsers - 解析器：涉及获取这些模型的输出结果，解析成更有结构化的格式，可以用来处理后续的操作
 
 LangChain: 提供了一组易于使用的抽象概念来操作这些结果。
+
+### Memory
+
+#### ConversationBufferMemory 对话缓冲区内存
+
+最简单的记忆类型，对话缓冲区内存。完整保存每一轮 input / output
+
+```python
+from langchain_classic.memory import ConversationBufferMemory
+memory = ConversationBufferMemory()
+conversation = ConversationChain(
+    llm=model,
+    memory=memory,
+    verbose=True,  # 打印完整 prompt，方便观察 memory 如何被注入
+)
+conversation.predict(input="Hi, my name is Andrew")  # 第 1 轮：自我介绍
+# save_context 接收一对 input / output，格式与 ConversationChain 内部写入的一致
+memory.save_context({"input": "Hi"}, {"output": "What's up"})
+```
+
+#### ConversationWindowMemory 对话窗口内存
+
+对话窗口内存。只保存最近的对话，超出窗口大小的对话会被丢弃。
+
+```python
+from langchain_classic.memory import ConversationWindowMemory
+memory = ConversationWindowMemory(k=2) # 只保存最近的2轮对话
+memory.save_context({"input": "Hi, my name is Andrew"}, {"output": "What's up"})
+memory.save_context({"input": "What's up"}, {"output": "I'm good, thank you"})
+memory.save_context({"input": "how are you"}, {"output": "I'm fine,thank you"})
+print(memory.load_memory_variables({})) # 以字典形式读取，键名默认为 "history"，供 prompt 模板占位符使用,只有最后2轮的.{'history': "Human: What's up\nAI: I'm good, thank you\nHuman: how are you\nAI: I'm fine,thank you"}
+```
+
+#### ConversationBufferTokenMemory 对话令牌缓冲区内存
+
+对话令牌缓冲区内存。按 token 数截断，超出 max_token_limit 时丢弃最早的消息
+
+```python
+from langchain_classic.memory import ConversationTokenBufferMemory
+from langchain_openai import ChatOpenAI
+token_counter = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+memory2 = ConversationTokenBufferMemory(llm=token_counter, max_token_limit=100)
+memory2.save_context({"input": "Hi, my name is Andrew"}, {"output": "What's up"})
+memory2.save_context({"input": "What's up111"}, {"output": "I'm good, thank you222"})
+memory2.save_context({"input": "how are you"}, {"output": "I'm fine,thank you"})
+print(memory2.load_memory_variables({}))
+
+```
+
+#### ConversationSummaryMemory 对话摘要内存
+
+对话摘要内存。只保存对话的摘要，超出窗口大小的对话会被丢弃。
