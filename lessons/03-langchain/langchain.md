@@ -82,3 +82,21 @@ print(memory.load_memory_variables({}))
 ```
 
 更好的方案是使用向量数据库，将对话历史存储到向量数据库中，然后根据查询条件从向量数据库中查询相关的对话历史。
+
+### Chains
+
+指的是可以对大量输入数据进行处理的链式结构。
+
+#### LLMChain
+
+是构成其他 Chain 的基础，把「提示词模板 + 大模型」打包成一个可重复调用的单元。
+
+#### SimpleSequentialChain
+
+用来把多个 Chain 按顺序串起来的容器：前一个 Chain 的输出，自动作为下一个 Chain 的输入。
+
+#### SequentialChain
+
+用来把多个 Chain 按顺序串起来的容器：前一个 Chain 的输出，自动作为下一个 Chain 的输入。
+
+#### RouterChain
