@@ -7,15 +7,20 @@ if [ ! -x .venv/bin/python ]; then
   exit 1
 fi
 
-TERM_ARCH="$(uname -m)"
-VENV_ARCH="$(.venv/bin/python -c 'import platform; print(platform.machine())')"
+# Apple Silicon：虚拟环境为 arm64，检测与执行均走原生架构
+if [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = "1" ]; then
+  PYTHON=(arch -arm64 .venv/bin/python)
+else
+  PYTHON=(.venv/bin/python)
+fi
 
-if [ "$TERM_ARCH" != "$VENV_ARCH" ]; then
+TERM_ARCH="$(uname -m)"
+VENV_ARCH="$("${PYTHON[@]}" -c 'import platform; print(platform.machine())')"
+
+if [ "$TERM_ARCH" != "$VENV_ARCH" ] && [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" != "1" ]; then
   echo "错误：终端架构 ($TERM_ARCH) 与虚拟环境 ($VENV_ARCH) 不一致。"
-  echo "请任选一种方式修复："
-  echo "  1) 关闭终端 Rosetta，使用原生 arm64 终端后运行: rm -rf .venv && make install"
-  echo "  2) 在 Rosetta 终端中重建: rm -rf .venv && arch -x86_64 python3.14 -m venv .venv && arch -x86_64 make install"
+  echo "请关闭「使用 Rosetta 打开」后重建: rm -rf .venv && make install"
   exit 1
 fi
 
-exec .venv/bin/python "$@"
+exec "${PYTHON[@]}" "$@"
